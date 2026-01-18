@@ -9,7 +9,7 @@ const noteSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      default: ' ',
+      default: '',
       trim: true,
     },
     tag: {
