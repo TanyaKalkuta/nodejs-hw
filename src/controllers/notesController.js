@@ -11,7 +11,10 @@ export const getAllNotes = async (req, res) => {
   const notesQuery = Note.find();
   // Текстовий пошук по name (працює лише якщо створено текстовий індекс)
   if (search) {
+    // select on frontend ['male', 'female', 'other'], index on gender
     notesQuery.where({ $text: { $search: search } });
+    // Live input text search. Atlast Search in production, $regex for pet projects
+    // studentsQuery.where({ name: { $regex: searchText, $options: 'i' } });
   }
   // Будуємо фільтр
   if (tag) {
