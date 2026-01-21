@@ -3,8 +3,36 @@ import createHttpError from 'http-errors';
 
 // Список усіх нотатків
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find();
-  res.status(200).json(notes);
+  // Отримуємо пара метри пагінації
+  const { page = 1, perPage = 10, tag, search } = req.query;
+  const skip = (page - 1) * perPage;
+  // Створюємо базовий запит до колекції
+  // const studentsQuery = Student.find();
+  const notesQuery = Note.find();
+  // Текстовий пошук по name (працює лише якщо створено текстовий індекс)
+  if (search) {
+    notesQuery.where({ $text: { $search: search } });
+  }
+  // Будуємо фільтр
+  if (tag) {
+    notesQuery.where('tag').equals(tag);
+  }
+
+  // Виконуємо одразу два запити паралельно
+  const [totalItems, notes] = await Promise.all([
+    notesQuery.clone().countDocuments(),
+    notesQuery.skip(skip).limit(perPage),
+  ]);
+
+  // Обчислюємо загальну кількість «сторінок»
+  const totalPages = Math.ceil(totalItems / perPage);
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    notes,
+  });
 };
 // // Конкретна нотатка за id
 export const getNoteById = async (req, res) => {

@@ -37,5 +37,8 @@ const noteSchema = new mongoose.Schema(
   },
 );
 
+// Додаємо текстовий індекс: кажемо MongoDB, що по полю title можна робити $text
+noteSchema.index({ title: 'text', content: 'text' });
+
 export const Note = mongoose.model('Note', noteSchema);
 //export const Student = mongoose.model("Student", studentSchema);
