@@ -1,27 +1,21 @@
 import mongoose from 'mongoose';
-import { TAGS } from '../constants/tags.js';
 
-const noteSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
-    title: {
+    username: {
       type: String,
-      required: true,
       trim: true, // прибирає пробіли на початку та в кінці
     },
-    content: {
+    email: {
       type: String,
-      default: '',
+      unique: true,
+      require: true,
       trim: true,
     },
-    tag: {
+    password: {
       type: String,
-      enum: [...TAGS],
-      default: 'Todo',
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
+      require: true,
+      trim: true,
     },
   },
   {
@@ -31,9 +25,17 @@ const noteSchema = new mongoose.Schema(
     versionKey: false,
   },
 );
+userSchema.pre('save', function () {
+  if (!this.username) {
+    this.username = this.email;
+  }
+});
 
-// Додаємо текстовий індекс: кажемо MongoDB, що по полю title можна робити $text
-noteSchema.index({ title: 'text', content: 'text' });
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
-export const Note = mongoose.model('Note', noteSchema);
+export const User = mongoose.model('User', userSchema);
 //export const Student = mongoose.model("Student", studentSchema);

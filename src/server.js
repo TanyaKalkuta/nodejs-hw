@@ -8,6 +8,8 @@ import { logger } from './middleware/logger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -25,7 +27,9 @@ app.use(
 );
 //
 app.use(helmet()); //захищає від типових веб-атак/Express-сервер використовує стандартні HTTP-заголовки безпеки
+app.use(cookieParser());
 
+app.use(authRoutes);
 app.use(notesRoutes);
 
 // Middleware 404 (після всіх маршрутів)
