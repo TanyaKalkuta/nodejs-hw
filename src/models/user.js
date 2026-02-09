@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    avatar: {
+      type: String,
+      required: false,
+      default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
+    },
   },
   {
     // автоматично буде додавати до об'єкту два поля: createdAt (дата створення) та updatedAt (дата оновлення).
